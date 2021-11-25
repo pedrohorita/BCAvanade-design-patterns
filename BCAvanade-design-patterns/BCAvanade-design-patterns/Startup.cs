@@ -1,6 +1,11 @@
+using BCAvanade_design_patterns.Domain.Interfaces;
+using BCAvanade_design_patterns.Infra.Facede;
+using BCAvanade_design_patterns.Infra.Repository;
+using BCAvanade_design_patterns.Infra.Repository.EF;
 using BCAvanade_design_patterns.Infra.Singleton;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -33,6 +38,18 @@ namespace BCAvanade_design_patterns
             });
 
             services.AddSingleton<SingletonContainer>();
+            //services.AddSingleton<IVeiculoRepository, InMemoryRepository>();
+            services.AddTransient<IVeiculoDetran, VeiculoDetranFacade>();
+
+            services.AddTransient<IVeiculoRepository, FrotaRepository>();
+            services.AddTransient<IVeiculoDetran, VeiculoDetranFacade>();
+
+            IServiceCollection serviceCollection = services.AddDbContext<FrotaContext>(opt =>
+                                               opt.UseInMemoryDatabase("Frota"));
+
+            services.AddHttpClient();
+
+            services.Configure<DetranOptions>(Configuration.GetSection("DetranOptions"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
